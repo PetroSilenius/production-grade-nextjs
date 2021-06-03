@@ -9,7 +9,7 @@ import HomeNav from '../../components/homeNav'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { posts } from '../../content'
+import { posts as postsFromCMS } from '../../content'
 import renderToString from 'next-mdx-remote/render-to-string'
 
 const BlogPost: FC<Post> = ({ source, frontMatter }) => {
@@ -60,13 +60,14 @@ export function getStaticPaths() {
   }
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params, preview }) {
   let post
   try {
     const filePath = path.join(process.cwd(), 'posts', params.slug + '.mdx')
     post = fs.readFileSync(filePath, 'utf-8')
   } catch {
-    const cmsPosts = posts.published.map((p) => {
+    const cmsPostsRaw = preview ? postsFromCMS.draft : postsFromCMS.published
+    const cmsPosts = cmsPostsRaw.map((p) => {
       return matter(p)
     })
 
