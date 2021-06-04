@@ -20,7 +20,6 @@ The app is available on https://production-grade-nextjs-petrosilenius.vercel.app
 * [MongoDB](https://www.mongodb.com/)
 * [Evergreen](https://evergreen.segment.com/)
 
-<!-- GETTING STARTED -->
 ## Getting Started
 
 To get a local copy up and running follow these simple steps.
@@ -60,13 +59,6 @@ Start up the local dev env
    ```sh
    yarn dev
    ```
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-
 
 ## Contact
 
