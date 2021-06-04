@@ -9,6 +9,7 @@ import User from '../../components/user'
 import FolderPane from '../../components/folderPane'
 import DocPane from '../../components/docPane'
 import NewFolderDialog from '../../components/newFolderDialog'
+import { folder, doc, connectToDB } from '../../db'
 
 const App: FC<{ folders?: any[]; activeFolder?: any; activeDoc?: any; activeDocs?: any[] }> = ({
   folders,
@@ -80,16 +81,35 @@ App.defaultProps = {
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
+
+  if (!session) {
+    return { props: { session } }
+  }
+  const { db } = await connectToDB()
+  const folders = await folder.getFolders(db, session.user.id)
+
+  let activeFolder = null
+  let activeDocs = null
+  let activeDoc = null
+  if (ctx.params.id) {
+    activeFolder = folders.find((f) => f.id === ctx.params.id[0])
+    activeDocs = await doc.getDocsByFolder(db, activeFolder._id)
+
+    if (ctx.params.id.length > 1) {
+      activeDoc = activeDocs.find((d) => d.id === ctx.params.id[2])
+    }
+  }
+
   return {
-    props: { session },
+    props: { session, folders, activeFolder, activeDocs, activeDoc },
   }
 }
 
 /**
  * Catch all handler. Must handle all different page
  * states.
- * 1. Folders - none selected
- * 2. Folders => Folder selected
- * 3. Folders => Folder selected => Document selected
+ * 1. Folders - none selected /app
+ * 2. Folders => Folder selected /app/folder_id
+ * 3. Folders => Folder selected => Document selected app/folder_id/doc_id
  */
 export default App
