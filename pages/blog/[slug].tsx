@@ -12,7 +12,7 @@ import matter from 'gray-matter'
 import { posts as postsFromCMS } from '../../content'
 import renderToString from 'next-mdx-remote/render-to-string'
 
-const BlogPost: FC<Post> = ({ source, frontMatter }) => {
+const BlogPost: FC<Post> = ({ source = '', frontMatter }) => {
   const content = hydrate(source)
   const router = useRouter()
 
