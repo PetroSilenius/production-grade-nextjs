@@ -28,7 +28,7 @@ export const connectToDB = async () => {
     console.log('connected to db')
   }
 
-  const db = global.mongo.client.db('vercel')
+  const db = global.mongo.client.db('myFirstDatabase')
 
   return { db, dbClient: global.mongo.client }
 }

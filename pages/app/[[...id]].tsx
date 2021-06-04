@@ -63,7 +63,7 @@ const App: FC<{ folders?: any[]; activeFolder?: any; activeDoc?: any; activeDocs
           <NewFolderButton onClick={() => setIsShown(true)} />
         </Pane>
         <Pane>
-          <FolderList folders={[{ _id: 1, name: 'hello' }]} />{' '}
+          <FolderList folders={folders} />{' '}
         </Pane>
       </Pane>
       <Pane marginLeft={300} width="calc(100vw - 300px)" height="100vh" overflowY="auto" position="relative">
@@ -75,28 +75,25 @@ const App: FC<{ folders?: any[]; activeFolder?: any; activeDoc?: any; activeDocs
   )
 }
 
-App.defaultProps = {
-  folders: [],
-}
-
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx)
 
-  if (!session) {
-    return { props: { session } }
+  if (!session || !session.user) {
+    return { props: {} }
   }
   const { db } = await connectToDB()
+
   const folders = await folder.getFolders(db, session.user.id)
 
   let activeFolder = null
   let activeDocs = null
   let activeDoc = null
   if (ctx.params.id) {
-    activeFolder = folders.find((f) => f.id === ctx.params.id[0])
+    activeFolder = folders.find((f) => f._id === ctx.params.id[0])
     activeDocs = await doc.getDocsByFolder(db, activeFolder._id)
 
     if (ctx.params.id.length > 1) {
-      activeDoc = activeDocs.find((d) => d.id === ctx.params.id[2])
+      activeDoc = activeDocs.find((d) => d._id === ctx.params.id[1])
     }
   }
 
